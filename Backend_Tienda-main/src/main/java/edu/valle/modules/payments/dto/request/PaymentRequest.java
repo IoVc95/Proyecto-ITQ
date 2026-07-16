@@ -1,0 +1,12 @@
+package edu.valle.modules.payments.dto.request;
+
+import edu.valle.common.enums.PaymentMethod;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
+
+public record PaymentRequest(
+        @NotNull @DecimalMin(value = "0.0", inclusive = false) BigDecimal amount,
+        @NotNull PaymentMethod paymentMethod
+) {
+}

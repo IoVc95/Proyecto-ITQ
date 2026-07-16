@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reabastecer desde proveedor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 32px;
+            color: #222;
+        }
+
+        form {
+            margin-bottom: 24px;
+        }
+
+        label,
+        input,
+        button {
+            font-size: 16px;
+        }
+
+        input {
+            padding: 7px 8px;
+            margin-right: 8px;
+        }
+
+        input[name="barcode"] {
+            min-width: 260px;
+        }
+
+        button {
+            padding: 8px 12px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px 10px;
+            text-align: left;
+        }
+
+        th {
+            background: #f4f4f4;
+        }
+
+        .message {
+            border: 1px solid #ddd;
+            padding: 12px;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+<h1>Reabastecer desde proveedor</h1>
+
+<form th:action="@{/supplier-panel/replenish}" method="post">
+    <label for="barcode">Barcode</label>
+    <input id="barcode" name="barcode" type="text" th:value="${barcode}" required>
+
+    <label for="quantity">Cantidad</label>
+    <input id="quantity" name="quantity" type="number" min="1" th:value="${quantity}" required>
+
+    <button type="submit">Reabastecer</button>
+</form>
+
+<div th:if="${result != null}" class="message">
+    <p><strong>Resultado:</strong> <span th:text="${result.message}">Mensaje</span></p>
+    <p th:if="${result.success}">
+        <strong>Cantidad enviada:</strong> <span th:text="${quantity}">0</span>
+    </p>
+    <p th:if="${result.success}">
+        <strong>Stock restante proveedor:</strong> <span th:text="${result.stock}">0</span>
+    </p>
+    <p th:if="${result.success && storeMessage != null}">
+        <strong>Tienda:</strong> <span th:text="${storeMessage}">Mensaje tienda</span>
+    </p>
+    <p th:if="${storeUpdated}">
+        <strong>Producto tienda:</strong> <span th:text="${storeProductName}">Producto</span>
+    </p>
+    <p th:if="${storeUpdated}">
+        <strong>Stock actual tienda:</strong> <span th:text="${storeStock}">0</span>
+    </p>
+
+    <table th:if="${result.success}">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Barcode</th>
+            <th>Precio</th>
+            <th>Stock restante</th>
+            <th>Activo</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td th:text="${result.id}">1</td>
+            <td th:text="${result.name}">Producto</td>
+            <td th:text="${result.barcode}">000000</td>
+            <td th:text="${result.price}">0.00</td>
+            <td th:text="${result.stock}">0</td>
+            <td th:text="${result.active}">true</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<p><a th:href="@{/supplier-panel/products}">Volver a productos</a></p>
+</body>
+</html>
