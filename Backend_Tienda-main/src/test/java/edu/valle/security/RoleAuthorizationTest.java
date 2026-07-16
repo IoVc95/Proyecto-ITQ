@@ -18,6 +18,8 @@ import edu.valle.modules.sales.controller.SaleController;
 import edu.valle.modules.sales.service.SaleService;
 import edu.valle.modules.users.controller.UserController;
 import edu.valle.modules.users.service.UserService;
+import edu.valle.modules.supplier.controller.SupplierController;
+import edu.valle.modules.supplier.service.SupplierIntegrationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -48,6 +50,7 @@ class RoleAuthorizationTest {
     private PaymentController paymentController;
     @Autowired private CartController cartController;
     @Autowired private StoreController storeController;
+    @Autowired private SupplierController supplierController;
 
     @Test
     @WithMockUser(roles = "ADMIN")
@@ -106,6 +109,21 @@ class RoleAuthorizationTest {
         assertThrows(AccessDeniedException.class, () -> cartController.get(mock(Authentication.class)));
     }
 
+    @Test @WithMockUser(roles="ADMIN")
+    void adminCanUseSupplierIntegration() {
+        assertDoesNotThrow(() -> supplierController.getProduct("SKU-1"));
+    }
+
+    @Test @WithMockUser(roles="SELLER")
+    void sellerCanUseSupplierIntegration() {
+        assertDoesNotThrow(() -> supplierController.getProduct("SKU-1"));
+    }
+
+    @Test @WithMockUser(roles="CUSTOMER")
+    void customerCannotUseSupplierIntegration() {
+        assertThrows(AccessDeniedException.class, () -> supplierController.getProduct("SKU-1"));
+    }
+
     @Configuration
     @EnableMethodSecurity
     static class Config {
@@ -136,6 +154,7 @@ class RoleAuthorizationTest {
         }
         @Bean CartService cartService(){return mock(CartService.class);}
         @Bean StoreService storeService(){return mock(StoreService.class);}
+        @Bean SupplierIntegrationService supplierIntegrationService(){return mock(SupplierIntegrationService.class);}
 
         @Bean
         UserController userController(UserService userService) {
@@ -163,5 +182,6 @@ class RoleAuthorizationTest {
         }
         @Bean CartController cartController(CartService cartService){return new CartController(cartService);}
         @Bean StoreController storeController(StoreService storeService){return new StoreController(storeService);}
+        @Bean SupplierController supplierController(SupplierIntegrationService service){return new SupplierController(service);}
     }
 }

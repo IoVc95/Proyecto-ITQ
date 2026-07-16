@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://valle.edu/supplier-products"
+           xmlns:tns="http://valle.edu/supplier-products"
+           elementFormDefault="qualified">
+    <xs:complexType name="supplierProductResponse">
+        <xs:sequence>
+            <xs:element name="success" type="xs:boolean"/>
+            <xs:element name="message" type="xs:string" minOccurs="0"/>
+            <xs:element name="id" type="xs:long" minOccurs="0"/>
+            <xs:element name="productName" type="xs:string" minOccurs="0"/>
+            <xs:element name="size" type="xs:string" minOccurs="0"/>
+            <xs:element name="color" type="xs:string" minOccurs="0"/>
+            <xs:element name="sku" type="xs:string" minOccurs="0"/>
+            <xs:element name="price" type="xs:decimal" minOccurs="0"/>
+            <xs:element name="availableStock" type="xs:int" minOccurs="0"/>
+            <xs:element name="active" type="xs:boolean" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="getSupplierProductBySkuRequest"><xs:complexType><xs:sequence><xs:element name="sku" type="xs:string"/></xs:sequence></xs:complexType></xs:element>
+    <xs:element name="getSupplierProductBySkuResponse" type="tns:supplierProductResponse"/>
+    <xs:element name="replenishSupplierProductRequest"><xs:complexType><xs:sequence><xs:element name="sku" type="xs:string"/><xs:element name="quantity" type="xs:int"/></xs:sequence></xs:complexType></xs:element>
+    <xs:element name="replenishSupplierProductResponse" type="tns:supplierProductResponse"/>
+    <xs:element name="restoreSupplierProductStockRequest"><xs:complexType><xs:sequence><xs:element name="sku" type="xs:string"/><xs:element name="quantity" type="xs:int"/></xs:sequence></xs:complexType></xs:element>
+    <xs:element name="restoreSupplierProductStockResponse" type="tns:supplierProductResponse"/>
+</xs:schema>
