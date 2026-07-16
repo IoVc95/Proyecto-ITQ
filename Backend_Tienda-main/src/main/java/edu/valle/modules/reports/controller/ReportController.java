@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/reports")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+@PreAuthorize("hasAnyRole('ADMIN', 'SELLER')")
 @Tag(name = "Reports", description = "Reportes de ventas e ingresos")
 public class ReportController {
 

@@ -57,7 +57,7 @@ class AuthServiceImplTest {
 
         ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(captor.capture());
-        assertEquals(UserRole.USER, captor.getValue().getRole());
+        assertEquals(UserRole.CUSTOMER, captor.getValue().getRole());
         assertEquals("encoded-password", captor.getValue().getPasswordHash());
     }
 }

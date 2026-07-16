@@ -24,6 +24,9 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
     List<Sale> findBySaleDateBetween(LocalDateTime startDate, LocalDateTime endDate);
 
     List<Sale> findByUserId(Long userId);
+    List<Sale> findAllByOrderBySaleDateDesc();
+    List<Sale> findByUserUsernameOrderBySaleDateDesc(String username);
+    Optional<Sale> findByIdAndUserUsername(Long id, String username);
 
     long countBySaleDateBetween(LocalDateTime startDate, LocalDateTime endDate);
 

@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 class CreateSaleItemRequestTest {
 
     @Test
-    void saleItemsContinueUsingProductId() {
+    void saleItemsUseProductVariantId() {
         CreateSaleItemRequest request = new CreateSaleItemRequest(15L, 2);
 
-        assertEquals(15L, request.productId());
+        assertEquals(15L, request.productVariantId());
         assertEquals(2, request.quantity());
     }
 }

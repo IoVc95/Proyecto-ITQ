@@ -14,7 +14,7 @@ public interface SaleItemRepository extends JpaRepository<SaleItem, Long> {
 
     List<SaleItem> findBySaleId(Long saleId);
 
-    List<SaleItem> findByProductId(Long productId);
+    List<SaleItem> findByProductVariantId(Long productVariantId);
 
     @Query("""
             select new edu.valle.modules.reports.dto.response.TopProductResponse(
@@ -24,7 +24,8 @@ public interface SaleItemRepository extends JpaRepository<SaleItem, Long> {
                 sum(i.subtotal)
             )
             from SaleItem i
-            join i.product p
+            join i.productVariant v
+            join v.product p
             join i.sale s
             where s.saleDate between :startDate and :endDate
               and s.status <> :excludedStatus
@@ -45,7 +46,8 @@ public interface SaleItemRepository extends JpaRepository<SaleItem, Long> {
                 coalesce(sum(i.subtotal), 0)
             )
             from SaleItem i
-            join i.product p
+            join i.productVariant v
+            join v.product p
             join i.sale s
             where s.saleDate between :from and :to
               and s.status <> :excludedStatus
@@ -66,7 +68,8 @@ public interface SaleItemRepository extends JpaRepository<SaleItem, Long> {
                 coalesce(sum(i.subtotal), 0)
             )
             from SaleItem i
-            join i.product p
+            join i.productVariant v
+            join v.product p
             join p.category c
             join i.sale s
             where s.saleDate between :from and :to

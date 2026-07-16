@@ -6,6 +6,10 @@ import static org.mockito.Mockito.mock;
 
 import edu.valle.modules.catalog.controller.ProductController;
 import edu.valle.modules.catalog.service.ProductService;
+import edu.valle.modules.cart.controller.CartController;
+import edu.valle.modules.cart.service.CartService;
+import edu.valle.modules.store.controller.StoreController;
+import edu.valle.modules.store.service.StoreService;
 import edu.valle.modules.payments.controller.PaymentController;
 import edu.valle.modules.payments.service.PaymentService;
 import edu.valle.modules.reports.controller.ReportController;
@@ -21,6 +25,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.core.Authentication;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 @SpringJUnitConfig(RoleAuthorizationTest.Config.class)
@@ -40,6 +46,8 @@ class RoleAuthorizationTest {
 
     @Autowired
     private PaymentController paymentController;
+    @Autowired private CartController cartController;
+    @Autowired private StoreController storeController;
 
     @Test
     @WithMockUser(roles = "ADMIN")
@@ -48,37 +56,54 @@ class RoleAuthorizationTest {
     }
 
     @Test
-    @WithMockUser(roles = "MANAGER")
-    void managerCannotManageUsers() {
+    @WithMockUser(roles = "SELLER")
+    void sellerCannotManageUsers() {
         assertThrows(AccessDeniedException.class, () -> userController.findAll());
     }
 
     @Test
-    @WithMockUser(roles = "CASHIER")
-    void cashierCanConsultProductsButCannotManageThem() {
+    @WithMockUser(roles = "SELLER")
+    void sellerCanManageProducts() {
         assertDoesNotThrow(() -> productController.findAll());
-        assertThrows(AccessDeniedException.class, () -> productController.deactivate(1L));
+        assertDoesNotThrow(() -> productController.deactivate(1L));
     }
 
     @Test
-    @WithMockUser(roles = "CASHIER")
-    void cashierCanCreateSalesButCannotConsultSales() {
+    @WithMockUser(roles = "SELLER")
+    void sellerCanManageSales() {
         assertDoesNotThrow(() -> saleController.create(null));
-        assertThrows(AccessDeniedException.class, () -> saleController.findById(1L));
+        assertDoesNotThrow(() -> saleController.find(1L));
     }
 
     @Test
-    @WithMockUser(roles = "CASHIER")
-    void cashierCanAddPaymentsButCannotListThem() {
+    @WithMockUser(roles = "SELLER")
+    void sellerCanManagePayments() {
         assertDoesNotThrow(() -> paymentController.addPayment(1L, null));
-        assertThrows(AccessDeniedException.class, () -> paymentController.findAll());
+        assertDoesNotThrow(() -> paymentController.findAll());
     }
 
     @Test
-    @WithMockUser(roles = "USER")
-    void normalUserCannotAccessInternalModules() {
+    @WithMockUser(roles = "CUSTOMER")
+    void customerCannotAccessAdministrativeModules() {
         assertThrows(AccessDeniedException.class, () -> productController.findAll());
         assertThrows(AccessDeniedException.class, () -> reportController.getCurrentMonthIncome());
+    }
+
+    @Test @WithAnonymousUser
+    void publicStoreIsAccessibleWithoutAuthentication() {
+        assertDoesNotThrow(() -> storeController.products(null));
+    }
+
+    @Test @WithMockUser(username="customer",roles="CUSTOMER")
+    void cartAndCheckoutAreCustomerOnly() {
+        Authentication authentication=mock(Authentication.class);
+        assertDoesNotThrow(() -> cartController.get(authentication));
+        assertDoesNotThrow(() -> saleController.checkout(authentication,null));
+    }
+
+    @Test @WithMockUser(roles="SELLER")
+    void sellerCannotUseCustomerCart() {
+        assertThrows(AccessDeniedException.class, () -> cartController.get(mock(Authentication.class)));
     }
 
     @Configuration
@@ -109,6 +134,8 @@ class RoleAuthorizationTest {
         PaymentService paymentService() {
             return mock(PaymentService.class);
         }
+        @Bean CartService cartService(){return mock(CartService.class);}
+        @Bean StoreService storeService(){return mock(StoreService.class);}
 
         @Bean
         UserController userController(UserService userService) {
@@ -134,5 +161,7 @@ class RoleAuthorizationTest {
         PaymentController paymentController(PaymentService paymentService) {
             return new PaymentController(paymentService);
         }
+        @Bean CartController cartController(CartService cartService){return new CartController(cartService);}
+        @Bean StoreController storeController(StoreService storeService){return new StoreController(storeService);}
     }
 }

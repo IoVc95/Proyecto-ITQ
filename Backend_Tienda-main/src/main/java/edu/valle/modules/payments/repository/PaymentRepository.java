@@ -22,13 +22,13 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     @Query("select coalesce(sum(p.amount), 0) from Payment p where p.sale.id = :saleId")
     BigDecimal sumAmountBySaleId(Long saleId);
 
-    @Query("select coalesce(sum(p.amount), 0) from Payment p where p.paidAt between :from and :to")
+    @Query("select coalesce(sum(p.amount), 0) from Payment p where p.paidAt between :from and :to and p.sale.status <> edu.valle.common.enums.SaleStatus.CANCELLED")
     BigDecimal sumAmountByPaidAtBetween(LocalDateTime from, LocalDateTime to);
 
     @Query(value = """
             select cast(paid_at as date) as income_date, coalesce(sum(amount), 0) as income
-            from payments
-            where paid_at between :from and :to
+            from payments p join sales s on s.id=p.sale_id
+            where p.paid_at between :from and :to and s.status <> 'CANCELLED'
             group by cast(paid_at as date)
             order by income_date
             """, nativeQuery = true)
@@ -42,6 +42,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
             )
             from Payment p
             where p.paidAt between :from and :to
+              and p.sale.status <> edu.valle.common.enums.SaleStatus.CANCELLED
             group by p.paymentMethod
             order by sum(p.amount) desc
             """)

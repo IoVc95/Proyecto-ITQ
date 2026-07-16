@@ -13,8 +13,12 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface SaleMapper {
 
-    @Mapping(target = "productId", source = "product.id")
-    @Mapping(target = "productName", source = "product.name")
+    @Mapping(target = "productVariantId", source = "productVariant.id")
+    @Mapping(target = "productId", source = "productVariant.product.id")
+    @Mapping(target = "productName", source = "productVariant.product.name")
+    @Mapping(target = "size", source = "productVariant.size")
+    @Mapping(target = "color", source = "productVariant.color")
+    @Mapping(target = "sku", source = "productVariant.sku")
     SaleItemResponse toItemResponse(SaleItem item);
 
     @Mapping(target = "id", source = "sale.id")

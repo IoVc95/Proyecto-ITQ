@@ -72,6 +72,9 @@ public class PaymentServiceImpl implements PaymentService {
         if (sale.getStatus() == SaleStatus.CANCELLED) {
             throw new BusinessException("Cannot add payments to a cancelled sale");
         }
+        if (sale.getStatus() == SaleStatus.DELIVERED) {
+            throw new BusinessException("Cannot add payments to a delivered sale");
+        }
         if (sale.getStatus() == SaleStatus.PAID) {
             throw new BusinessException("The sale is already fully paid");
         }

@@ -30,28 +30,28 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SELLER')")
     @Operation(summary = "List payments")
     public List<PaymentResponse> findAll() {
         return paymentService.findAll();
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SELLER')")
     @Operation(summary = "Find payment by ID")
     public PaymentResponse findById(@PathVariable Long id) {
         return paymentService.findById(id);
     }
 
     @GetMapping("/sale/{saleId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SELLER')")
     @Operation(summary = "List payments by sale")
     public List<PaymentResponse> findBySaleId(@PathVariable Long saleId) {
         return paymentService.findBySaleId(saleId);
     }
 
     @GetMapping("/date-range")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SELLER')")
     @Operation(summary = "List payments in a date range")
     public List<PaymentResponse> findByDateRange(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
@@ -62,7 +62,7 @@ public class PaymentController {
 
     @PostMapping("/sale/{saleId}")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'CASHIER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SELLER')")
     @Operation(summary = "Add a payment to a pending sale")
     public PaymentResponse addPayment(
             @PathVariable Long saleId,

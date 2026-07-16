@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/categories")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+@PreAuthorize("hasAnyRole('ADMIN', 'SELLER')")
 @Tag(name = "Categories", description = "Gestión de categorías del catálogo")
 public class CategoryController {
 

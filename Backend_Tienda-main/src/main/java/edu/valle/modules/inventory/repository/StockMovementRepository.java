@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface StockMovementRepository extends JpaRepository<StockMovement, Long> {
 
-    List<StockMovement> findByProductId(Long productId);
+    List<StockMovement> findByProductVariantId(Long productVariantId);
 
     List<StockMovement> findByUserId(Long userId);
 
